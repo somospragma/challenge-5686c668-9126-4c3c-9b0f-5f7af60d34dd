@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.example.org/outputMessage"
+           xmlns:tns="http://www.example.org/outputMessage"
+           elementFormDefault="qualified">
+
+    <xs:element name="OutputMessage" type="tns:OutputMessageType"/>
+
+    <xs:complexType name="OutputMessageType">
+        <xs:sequence>
+            <xs:element name="header" type="tns:HeaderType"/>
+            <xs:element name="payload" type="tns:LegacyPayloadType"/>
+            <xs:element name="processingInfo" type="tns:ProcessingInfoType"/>
+        </xs:sequence>
+        <xs:attribute name="version" type="xs:string" use="required" fixed="1.0"/>
+    </xs:complexType>
+
+    <xs:complexType name="HeaderType">
+        <xs:sequence>
+            <xs:element name="messageId" type="xs:string"/>
+            <xs:element name="timestamp" type="xs:dateTime"/>
+            <xs:element name="correlationId" type="xs:string"/>
+            <xs:element name="originSystem" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LegacyPayloadType">
+        <xs:sequence>
+            <xs:element name="legacyAccountId" type="xs:string"/>
+            <xs:element name="legacyTransactionId" type="xs:string"/>
+            <xs:element name="amount" type="xs:decimal"/>
+            <xs:element name="currencyCode" type="xs:string"/>
+            <xs:element name="transactionCode" type="xs:string">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="D"/>
+                        <xs:enumeration value="W"/>
+                        <xs:enumeration value="T"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="processingDate" type="xs:date"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ProcessingInfoType">
+        <xs:sequence>
+            <xs:element name="status" type="xs:string">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="SUCCESS"/>
+                        <xs:enumeration value="PENDING"/>
+                        <xs:enumeration value="FAILED"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="retryCount" type="xs:integer" minOccurs="0"/>
+            <xs:element name="lastError" type="xs:string" minOccurs="0"/>
+            <xs:element name="processingTimestamp" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="NonEmptyString">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

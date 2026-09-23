@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.example.org/inputMessage"
+           xmlns:tns="http://www.example.org/inputMessage"
+           elementFormDefault="qualified">
+
+    <xs:element name="InputMessage" type="tns:InputMessageType"/>
+
+    <xs:complexType name="InputMessageType">
+        <xs:sequence>
+            <xs:element name="header" type="tns:HeaderType"/>
+            <xs:element name="payload" type="tns:PayloadType"/>
+        </xs:sequence>
+        <xs:attribute name="version" type="xs:string" use="required" fixed="1.0"/>
+    </xs:complexType>
+
+    <xs:complexType name="HeaderType">
+        <xs:sequence>
+            <xs:element name="messageId" type="xs:string"/>
+            <xs:element name="timestamp" type="xs:dateTime"/>
+            <xs:element name="originator" type="xs:string"/>
+            <xs:element name="correlationId" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PayloadType">
+        <xs:sequence>
+            <xs:element name="accountId" type="xs:string"/>
+            <xs:element name="transactionId" type="xs:string"/>
+            <xs:element name="amount" type="xs:decimal"/>
+            <xs:element name="currency" type="xs:string"/>
+            <xs:element name="transactionType" type="xs:string">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="DEPOSIT"/>
+                        <xs:enumeration value="WITHDRAWAL"/>
+                        <xs:enumeration value="TRANSFER"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="metadata" type="tns:MetadataType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MetadataType">
+        <xs:sequence>
+            <xs:element name="channel" type="xs:string"/>
+            <xs:element name="deviceId" type="xs:string" minOccurs="0"/>
+            <xs:element name="ipAddress" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="NonEmptyString">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

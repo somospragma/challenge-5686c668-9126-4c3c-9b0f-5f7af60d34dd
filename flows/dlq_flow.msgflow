@@ -1,0 +1,17 @@
+-- DLQ flow for handling dead letter messages
+DECLARE MESSAGE DOMAIN input_message, output_message;
+DECLARE QUEUE QUEUE.DLQ, QUEUE.OUT;
+
+CREATE COMPUTE MODULE dlq_flow
+
+CREATE PROCEDURE dlq_procedure (IN dlq_msg REFERENCE TO input_message)
+BEGIN
+    DECLARE output_msg REFERENCE TO output_message;
+    DECLARE retryInterval INTEGER 300; -- 5 minutes
+
+    SET output_msg = CALL transform_input_to_output(dlq_msg);
+    PUT output_msg TO QUEUE.OUT;
+    WAIT(retryInterval);
+END;
+
+END MODULE;

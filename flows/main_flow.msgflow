@@ -1,0 +1,30 @@
+-- Main flow for message orchestration
+DECLARE MESSAGE DOMAIN input_message, output_message;
+DECLARE QUEUE QUEUE.IN, QUEUE.OUT, QUEUE.DLQ;
+
+CREATE COMPUTE MODULE main_flow
+
+CREATE PROCEDURE main_procedure (IN input_msg REFERENCE TO input_message)
+BEGIN
+    DECLARE output_msg REFERENCE TO output_message;
+    DECLARE retryCount INTEGER;
+    DECLARE maxRetries INTEGER 3;
+    DECLARE success BOOLEAN FALSE;
+
+    SET retryCount = 0;
+    WHILE NOT success AND retryCount < maxRetries DO
+        BEGIN
+            SET output_msg = CALL transform_input_to_output(input_msg);
+            PUT output_msg TO QUEUE.OUT;
+            SET success = TRUE;
+        EXCEPTION
+            SET success = FALSE;
+            SET retryCount = retryCount + 1;
+            IF retryCount >= maxRetries THEN
+                PUT input_msg TO QUEUE.DLQ;
+            END IF;
+        END;
+    END WHILE;
+END;
+
+END MODULE;

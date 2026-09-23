@@ -1,0 +1,16 @@
+{
+  "name": "integration-flows",
+  "version": "1.0.0",
+  "description": "Proyecto de integración con IBM App Connect Enterprise para manejo de mensajería confiable con DLQ y política de reproceso",
+  "scripts": {
+    "lint": "echo \"Validación de esquemas XSD\" && xmllint --schema schemas/input_message.xsd schemas/input_message.xsd --noout && xmllint --schema schemas/output_message.xsd schemas/output_message.xsd --noout",
+    "validate": "echo \"Validación de estructura del proyecto\" && python3 -c \"import os; assert os.path.exists('flows/main_flow.msgflow'); assert os.path.exists('flows/dlq_flow.msgflow'); assert os.path.exists('transforms/input_to_output.xslt');\""  
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "xmllint": "*"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
